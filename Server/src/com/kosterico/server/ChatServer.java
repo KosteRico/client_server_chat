@@ -36,7 +36,7 @@ public class ChatServer implements TCPConnectionListener {
     @Override
     public synchronized void onConnectionReady(TCPConnection connection) {
         connections.add(connection);
-        sendAllConnections("Client connected: " + connection.toString());
+        sendAllConnections("Client connected: " + connection);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ChatServer implements TCPConnectionListener {
     @Override
     public synchronized void onDisconnect(TCPConnection connection) {
         connections.remove(connection);
-        sendAllConnections("Client disconnected: " + connection.toString());
+        sendAllConnections("Client disconnected: " + connection);
     }
 
     @Override
