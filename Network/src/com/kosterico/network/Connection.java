@@ -3,20 +3,20 @@ package com.kosterico.network;
 import java.io.*;
 import java.net.Socket;
 
-public class TCPConnection {
+public class Connection {
 
     private final Socket socket;
     private final Thread thread;
     private final BufferedReader reader;
     private final BufferedWriter writer;
 
-    private final TCPConnectionListener eventListener;
+    private final ConnectionListener eventListener;
 
-    public TCPConnection(TCPConnectionListener listener, String id, int port) throws IOException {
+    public Connection(ConnectionListener listener, String id, int port) throws IOException {
         this(listener, new Socket(id, port));
     }
 
-    public TCPConnection(TCPConnectionListener listener, Socket socket) throws IOException {
+    public Connection(ConnectionListener listener, Socket socket) throws IOException {
         this.socket = socket;
         eventListener = listener;
 
@@ -27,7 +27,7 @@ public class TCPConnection {
             try {
                 eventListener.onConnectionReady(this);
                 while (!Thread.currentThread().isInterrupted()) {
-                    listener.onReceiveString(TCPConnection.this, reader.readLine());
+                    listener.onReceiveString(Connection.this, reader.readLine());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

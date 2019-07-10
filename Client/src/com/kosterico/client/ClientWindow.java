@@ -1,7 +1,7 @@
 package com.kosterico.client;
 
-import com.kosterico.network.TCPConnection;
-import com.kosterico.network.TCPConnectionListener;
+import com.kosterico.network.Connection;
+import com.kosterico.network.ConnectionListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class ClientWindow extends JFrame implements ActionListener, TCPConnectionListener {
+public class ClientWindow extends JFrame implements ActionListener, ConnectionListener {
 
     private static final String IP = "localhost";
     private static final int PORT = 8000;
@@ -21,7 +21,7 @@ public class ClientWindow extends JFrame implements ActionListener, TCPConnectio
     private final JTextField fieldNickname = new JTextField(NICKNAME_DEFAULT);
     private final JTextField fieldInput = new JTextField();
 
-    private TCPConnection connection;
+    private Connection connection;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(ClientWindow::new);
@@ -43,7 +43,7 @@ public class ClientWindow extends JFrame implements ActionListener, TCPConnectio
         setVisible(true);
 
         try {
-            connection = new TCPConnection(this, IP, PORT);
+            connection = new Connection(this, IP, PORT);
         } catch (IOException e) {
             printMessage("Connection exception: " + e);
         }
@@ -58,22 +58,22 @@ public class ClientWindow extends JFrame implements ActionListener, TCPConnectio
     }
 
     @Override
-    public void onConnectionReady(TCPConnection connection) {
+    public void onConnectionReady(Connection connection) {
         printMessage("Connection ready ...");
     }
 
     @Override
-    public void onReceiveString(TCPConnection connection, String msg) {
+    public void onReceiveString(Connection connection, String msg) {
         printMessage(msg);
     }
 
     @Override
-    public void onDisconnect(TCPConnection connection) {
+    public void onDisconnect(Connection connection) {
         printMessage("Connection close");
     }
 
     @Override
-    public void onException(TCPConnection connection, Exception e) {
+    public void onException(Connection connection, Exception e) {
         printMessage("Connection exception: " + e);
     }
 

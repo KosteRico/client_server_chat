@@ -1,28 +1,28 @@
 package com.kosterico.server;
 
-import com.kosterico.network.TCPConnection;
-import com.kosterico.network.TCPConnectionListener;
+import com.kosterico.network.Connection;
+import com.kosterico.network.ConnectionListener;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatServer implements TCPConnectionListener {
+public class Server implements ConnectionListener {
 
     public static void main(String[] args) {
-        new ChatServer();
+        new Server();
     }
 
-    private final List<TCPConnection> connections = new ArrayList<>();
+    private final List<Connection> connections = new ArrayList<>();
 
-    private ChatServer() {
+    private Server() {
         System.out.println("Server is running ...");
         try (ServerSocket serverSocket = new ServerSocket(8000)) {
 
             while (true) {
                 try {
-                    new TCPConnection(this, serverSocket.accept());
+                    new Connection(this, serverSocket.accept());
                 } catch (IOException e) {
                     System.out.println("TCP Connection exception: " + e);
                 }
@@ -34,30 +34,30 @@ public class ChatServer implements TCPConnectionListener {
     }
 
     @Override
-    public synchronized void onConnectionReady(TCPConnection connection) {
+    public synchronized void onConnectionReady(Connection connection) {
         connections.add(connection);
         sendAllConnections("Client connected: " + connection);
     }
 
     @Override
-    public synchronized void onReceiveString(TCPConnection connection, String msg) {
+    public synchronized void onReceiveString(Connection connection, String msg) {
         sendAllConnections(msg);
     }
 
     @Override
-    public synchronized void onDisconnect(TCPConnection connection) {
+    public synchronized void onDisconnect(Connection connection) {
         connections.remove(connection);
         sendAllConnections("Client disconnected: " + connection);
     }
 
     @Override
-    public synchronized void onException(TCPConnection connection, Exception e) {
+    public synchronized void onException(Connection connection, Exception e) {
         System.out.println("TCP Connection exception: " + e);
     }
 
     private void sendAllConnections(String msg) {
         System.out.println(msg);
-        for (TCPConnection connection : connections) connection.sendMessage(msg);
+        for (Connection connection : connections) connection.sendMessage(msg);
     }
 
 }
