@@ -22,7 +22,7 @@ public class Recorder {
     public Recorder() throws IOException {
         fileType = AudioFileFormat.Type.WAVE;
         System.out.println(getClass().getResource(""));
-        wavFile = new File("D:/kosterico/Documents/JavaProjects/client_server_chat/Network/resources/mes_" + UUID.randomUUID().toString() + ".wav");
+        wavFile = new File("Network/resources/mes_" + UUID.randomUUID().toString() + ".wav");
 
         if (!wavFile.createNewFile()) {
             throw new FileAlreadyExistsException("File " + wavFile.getName() + " already exists");
