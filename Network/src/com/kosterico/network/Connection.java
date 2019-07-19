@@ -1,5 +1,7 @@
 package com.kosterico.network;
 
+import com.kosterico.messages.Message;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -7,8 +9,8 @@ public class Connection {
 
     private final Socket socket;
     private final Thread thread;
-    private final BufferedReader reader;
-    private final BufferedWriter writer;
+    private final ObjectOutputStream objectWriter;
+    private final ObjectInputStream objectReader;
 
     private final ConnectionListener eventListener;
 
@@ -20,16 +22,16 @@ public class Connection {
         this.socket = socket;
         eventListener = listener;
 
-        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        objectWriter = new ObjectOutputStream(socket.getOutputStream());
+        objectReader = new ObjectInputStream(socket.getInputStream());
 
         thread = new Thread(() -> {
             try {
                 eventListener.onConnectionReady(this);
                 while (!Thread.currentThread().isInterrupted()) {
-                    listener.onReceiveString(Connection.this, reader.readLine());
+                    listener.onReceiveString(Connection.this, (Message) objectReader.readObject());
                 }
-            } catch (IOException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             } finally {
                 eventListener.onDisconnect(this);
@@ -38,10 +40,10 @@ public class Connection {
         thread.start();
     }
 
-    public synchronized void sendMessage(String msg) {
+    public synchronized void sendMessage(Message msg) {
         try {
-            writer.write(msg + "\r\n");
-            writer.flush();
+            objectWriter.writeObject(msg);
+            objectWriter.flush();
         } catch (IOException e) {
             eventListener.onException(this, e);
             disconnect();
