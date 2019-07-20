@@ -8,4 +8,5 @@ public abstract class Message implements Serializable {
     public abstract void sendClient(ChatTextArea textArea);
 
     public abstract String toString();
+
 }

@@ -60,27 +60,30 @@ public class ClientWindow extends JFrame implements ConnectionListener {
                 String msg = fieldInput.getText();
                 if (msg.length() == 0) return;
                 fieldInput.setText(null);
-                connection.sendMessage(new TextMessage(msg, fieldNickname.getText()));
+                TextMessage message = new TextMessage(msg, fieldNickname.getText());
+                message.encrypt();
+                System.out.println("Encrypted message: " + message.toString());
+                connection.sendMessage(message);
             };
 
             ActionListener voiceMessageListener = e -> {
                 try {
                     if (!isVoiceMessageButtonPressed) {
                         recorder = new Recorder();
-                        Thread starter = new Thread(() -> {
+                        new Thread(() -> {
                             try {
                                 recorder.start();
                             } catch (LineUnavailableException | IOException ex) {
                                 ex.printStackTrace();
                             }
-                        });
-                        starter.start();
-                        isVoiceMessageButtonPressed = true;
+                        }).start();
+
                     } else {
                         recorder.stop();
-                        isVoiceMessageButtonPressed = false;
                         connection.sendMessage(new VoiceMessage(recorder.getPlayer(), fieldNickname.getText()));
                     }
+
+                    isVoiceMessageButtonPressed = !isVoiceMessageButtonPressed;
                 } catch (IOException ex) {
                     printMessage(new AlertMessage(ex.toString()));
                 }
