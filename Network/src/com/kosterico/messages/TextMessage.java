@@ -14,7 +14,7 @@ public class TextMessage extends UserMessage {
     @Override
     public void sendClient(ChatTextArea textArea) {
         decrypt();
-        System.out.println("Decrypted message: " + toString());
+        System.out.println("Decrypted message: " + text);
         textArea.appendText(toString() + "\n");
         textArea.setCaretPosition(textArea.getDocument().getLength());
     }
@@ -39,6 +39,7 @@ public class TextMessage extends UserMessage {
         }
 
         text = String.copyValueOf(chars);
+        System.out.println("Encrypted message: " + text);
     }
 
     private void decrypt() {

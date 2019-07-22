@@ -62,7 +62,6 @@ public class ClientWindow extends JFrame implements ConnectionListener {
                 fieldInput.setText(null);
                 TextMessage message = new TextMessage(msg, fieldNickname.getText());
                 message.encrypt();
-                System.out.println("Encrypted message: " + message.toString());
                 connection.sendMessage(message);
             };
 
